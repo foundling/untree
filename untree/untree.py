@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from typing import TextIO
-from parser import Parser
+from untree.parser import Parser
 
 '''
 
@@ -55,4 +55,4 @@ def main():
         lines = read_from_pipe()
     else:
         help()
-main()
+

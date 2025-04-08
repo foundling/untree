@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 from typing import List
-from tree import Tree
+
+from untree.tree import Tree
 
 
 @dataclass
