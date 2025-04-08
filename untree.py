@@ -5,10 +5,10 @@ from parser import Parser
 
 '''
 
-superdir.py
+untree.py
 
-superdir.py [options] -s schema_file
-tree -F --noreport . | superdir.py [options]
+untree.py [options] -s schema_file
+tree -F --noreport . | untree.py [options]
 
 spec: exactly 'tree -F --noreport'
 
@@ -36,7 +36,7 @@ def get_lines(f:TextIO):
     return [line.rstrip('\n)') for line in f.readlines() if line.strip()]
 
 def help():
-    print("[ tree -F <dir>| ] superdir [[options] -s <schema file>]")
+    print("[ tree -F <dir>| ] untree [[options] -s <schema file>]")
 
 def main():
 
