@@ -1,0 +1,6 @@
+test/
+├── dirA/
+│   └── file1.txt
+├── dirB/
+│   └── file2.txt
+└── dirC/
