@@ -1,3 +1,3 @@
-from untree import main
+from untree.untree import main
 
 main()

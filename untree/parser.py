@@ -8,7 +8,7 @@ from untree.tree import Tree
 class Parser():
 
     lines:List[str]
-    tree:Tree = Tree(None)
+    tree:Tree
 
     def parse(self):
         pass

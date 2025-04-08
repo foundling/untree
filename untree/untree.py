@@ -42,7 +42,7 @@ def main():
 
     cli_args = sys.argv[1:]  # oversimplified arg handling
     is_from_filepath = len(cli_args) > 0
-    is_from_pipe = sys.__stdin__ and sys.__stdin__.isatty()
+    is_from_pipe = sys.__stdin__ and not sys.__stdin__.isatty()
     
     if (is_from_filepath):
         filepath = cli_args[0]
@@ -52,7 +52,7 @@ def main():
             parser.parse()
 
     elif is_from_pipe:
+        print('from pipe')
         lines = read_from_pipe()
     else:
         help()
-
