@@ -11,24 +11,24 @@ class Filetype(Enum):
     directory = 1
 
 @dataclass
-class FileRecord():
+class Entry():
     depth: int
     filename: str
     filetype: Filetype
 
-@dataclass
+
 class Parser():
 
-    lines:List[str] | None = None
-    line_index: int = 0
-    max_lines:int | None = None
-    indent_width: int = 0
+    def __init__(self):
+        self.lines:List[str] | None = None
+        self.line_index: int = 0
+        self.max_lines:int | None = None
+        self.indent_width: int = 0
 
     def parse(self, content:str):
         self.lines = [line for line in content.split('\n') if line.strip()]
         self.line_index = 0
         self.max_lines = len(self.lines)
-
 
     def parse_indent_width(self, line:str) -> int:
         prefix, _ = line.split(' ')
@@ -69,4 +69,4 @@ class Parser():
         depth = self.parse_depth(line)
         filetype = self.parse_type(line)
 
-        return FileRecord(depth=depth, filename=filename, filetype=filetype)
+        return Entry(depth=depth, filename=filename, filetype=filetype)

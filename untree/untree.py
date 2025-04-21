@@ -1,8 +1,7 @@
 #!/usr/bin/env python
 
-from typing import TextIO
 from untree.parser import Parser
-from untree.tree import Tree
+from untree.tree import Tree, Node
 
 '''
 
@@ -25,23 +24,19 @@ re: tutorial:
 import fileinput, sys
 
     
-def read_from_pipe():
+def read_from_pipe() -> str:
     return ''.join(line for line in fileinput.input())
 
-def read_from_filepath(filepath:str):
+def read_from_filepath(filepath:str) -> str:
     with open(filepath) as f:
         content = f.read()
     return content
-
-def get_lines(f:TextIO):
-    return [line.rstrip('\n)') for line in f.readlines() if line.strip()]
 
 def help():
     print("[ tree -F <dir>| ] untree [[options] -s <schema file>]")
 
 def main():
 
-    print('untree')
     cli_args = sys.argv[1:]  # oversimplified arg handling
     is_from_filepath = len(cli_args) > 0
     is_from_pipe = sys.__stdin__ and not sys.__stdin__.isatty()
@@ -59,9 +54,10 @@ def main():
         help()
 
     if tree_text is not None:
+        tree = Tree()
         parser = Parser()
         parser.parse(tree_text)
 
         while not parser.end_of_lines():
-            line_record = parser.get_next_line()
-            print(line_record)
+            entry = parser.get_next_line()
+            tree.add_node(entry)
