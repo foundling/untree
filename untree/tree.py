@@ -17,9 +17,9 @@ class Node():
     def add_node(self, node:'Node') -> None:
         self.children.append(node)
 
-@dataclass
 class Tree():
-    root:Node | None
+    def __init__(self):
+        self.root = None
 
     def add_node(self, node:Node) -> None:
         raise NotImplementedError

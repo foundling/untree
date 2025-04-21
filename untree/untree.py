@@ -2,15 +2,16 @@
 
 from typing import TextIO
 from untree.parser import Parser
+from untree.tree import Tree
 
 '''
 
 untree.py
 
-untree.py [options] -s schema_file
+untree.py [options] -s schema_file -o output_dir
 tree -F --noreport . | untree.py [options]
 
-spec: exactly 'tree -F --noreport'
+schema file spec: exactly 'tree --charset ascii -F --noreport <directory name>'
 
 re: tutorial: 
 - packaging cli app
@@ -40,19 +41,27 @@ def help():
 
 def main():
 
+    print('untree')
     cli_args = sys.argv[1:]  # oversimplified arg handling
     is_from_filepath = len(cli_args) > 0
     is_from_pipe = sys.__stdin__ and not sys.__stdin__.isatty()
     
-    if (is_from_filepath):
-        filepath = cli_args[0]
-        with open(filepath, 'r') as f:
-            lines = get_lines(f)
-            parser = Parser(lines)
-            parser.parse()
 
+    tree_text : str | None = None
+
+    if (is_from_filepath):
+        with open(cli_args[0], 'r') as f:
+            tree_text = f.read()
     elif is_from_pipe:
-        print('from pipe')
-        lines = read_from_pipe()
+        tree_text = read_from_pipe()
+
     else:
         help()
+
+    if tree_text is not None:
+        parser = Parser()
+        parser.parse(tree_text)
+
+        while not parser.end_of_lines():
+            line_record = parser.get_next_line()
+            print(line_record)
