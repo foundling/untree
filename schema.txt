@@ -1,5 +1,5 @@
 testdir/
-|-- a/
-|   `-- a.txt
-`-- b/
-    `-- b.txt
+    a/
+        a.txt
+    b/
+        b.txt

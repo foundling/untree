@@ -25,7 +25,7 @@ class Parser():
         self.max_lines:int | None = None
         self.indent_width: int = 0
 
-    def parse(self, content:str):
+    def init(self, content:str):
         self.lines = [line for line in content.split('\n') if line.strip()]
         self.line_index = 0
         self.max_lines = len(self.lines)

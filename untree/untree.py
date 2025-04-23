@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 
 from untree.parser import Parser
-from untree.tree import Tree, Node
+from untree.tree import Tree
 
 '''
 
@@ -53,11 +53,42 @@ def main():
     else:
         help()
 
-    if tree_text is not None:
-        tree = Tree()
-        parser = Parser()
-        parser.parse(tree_text)
+    if tree_text is None:
+        return
 
-        while not parser.end_of_lines():
-            entry = parser.get_next_line()
-            tree.add_node(entry)
+
+    tree = Tree()
+    parser = Parser()
+    parser.init(tree_text)
+
+    # TODO:
+    # + move the lines iteration into parser.parse method
+    # + that exposes a callback parameter we can use to build our tree when 
+    #   an entry is produced.
+    prev_entry = None
+    while not parser.end_of_lines():
+        entry = parser.get_next_line()
+
+        if prev_entry:
+
+            # if we've done at least one node so far and the global depth of this
+            # entry is 0, we have an error. can't have two root nodes.
+
+            if entry.depth == 0:
+                raise ValueError('Parse Error: two root directories detected.')
+            
+            indent = entry.depth - prev_entry.depth
+
+            if indent > 1:
+                # can't have more than 1 indent
+                raise ValueError('Parse Error: expected a single indent.')
+                
+            tree.add_node(entry, indent=indent)
+        else:
+            tree.add_node(entry, indent=0)
+
+        prev_entry = entry
+    
+
+
+    tree.walk(None)
