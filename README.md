@@ -1,4 +1,23 @@
-# ![untree logo](untree-logo.png) `untree`: turn tree output back into directories![untree logo](untree-logo.png)
+# `untree`: turn tree output back into directories
+
+![untree logo](untree-logo.png) 
+![untree logo](untree-logo.png) 
+![untree logo](untree-logo.png) 
+![untree logo](untree-logo.png) 
+![untree logo](untree-logo.png) 
+![untree logo](untree-logo.png) 
+![untree logo](untree-logo.png) 
+![untree logo](untree-logo.png) 
+![untree logo](untree-logo.png) 
+![untree logo](untree-logo.png) 
+![untree logo](untree-logo.png) 
+![untree logo](untree-logo.png) 
+![untree logo](untree-logo.png) 
+![untree logo](untree-logo.png) 
+![untree logo](untree-logo.png) 
+![untree logo](untree-logo.png) 
+![untree logo](untree-logo.png) 
+![untree logo](untree-logo.png) 
 
 ## Motivation
 
