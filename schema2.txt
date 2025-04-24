@@ -1,5 +1,0 @@
-testdir
-├── testdir/a
-│   └── testdir/a/a.txt
-└── testdir/b
-    └── testdir/b/b.txt
