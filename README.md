@@ -1,15 +1,61 @@
 # untree: the inverse of tree
 
+## Motivation
+The `tree` command is a widely used and useful tool.  We see it often in code tutorials and reference documents.
+
+Wouldn't it be nice to simply take the `tree` output from a tutorial or reference on the web and generate a local directory tree?
+
 ## Installation
+`untree` is a command-line utility.  To install it globally, run:
 
-
-`pip install untree`
+```bash
+pip install untree
+```
 
 ## Usage
 
 ```bash
 untree [options] -s schema_file -o output_dir
 ```
+
+## Examples
+
+### Using a schema file
+
+```bash
+# run 'tree' on a directory and save as a schema file.
+$ tree -F --noreport path/to/src/dir > schema.txt
+
+# this is what it looks like
+$ cat schema.txt
+testdir
+├── testdir/a
+│   └── testdir/a/a.txt
+└── testdir/b
+    └── testdir/b/b.txt
+
+# run 'untree' on the schema file
+$ untree -o /path/to/output/dir -s schema.txt
+
+# run 'tree' on your newly generated file tree
+$ tree -F --noreport /path/to/new_dir
+new_dir
+├── testdir/a
+│   └── testdir/a/a.txt
+└── testdir/b
+    └── testdir/b/b.txt
+```
+
+### Using stdin
+
+```bash
+
+$ tree -F --noreport /path/to/src/dir | untree -o /path/to/output/dir
+
+```
+
+
+
 
 ## Input Specification
 
