@@ -9,9 +9,10 @@
 
 ```
 
-untree.py [options] -s schema_file -o output_dir
+untree [options] -s schema_file -o output_dir
 tree -F --noreport . | untree.py [options]
-
-schema file spec: exactly 'tree --charset ascii -F --noreport <directory name>'
-
 ```
+
+`untree` is meant to work with `tree` output, so it uses a slightly specific invocation of `tree` as its specification:
+
+`tree -F --noreport <directory name>'
