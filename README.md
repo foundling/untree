@@ -1,9 +1,12 @@
 # ![untree logo](untree-logo.png) untree: the inverse of tree 
 
 ## Motivation
+
 The `tree` command is a widely used and useful tool.  We see it often in code tutorials and reference documents.
 
 Wouldn't it be nice to simply take the `tree` output from a tutorial or reference on the web and generate a local directory tree?
+
+I don't know about you but I get tired of typing `mkdir -p` over and over again in scenarios like this. That's where `untree` comes in.
 
 ## Installation
 `untree` is a command-line utility.  To install it globally, run:
