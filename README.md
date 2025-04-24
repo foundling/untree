@@ -2,9 +2,9 @@
 
 ## Motivation
 
-The `tree` command is a widely used and useful tool.  We see it often in code tutorials and reference documents.
+The `tree` command is a widely-used and useful tool.  We see it often in code tutorials and reference documents.
 
-Here is a real-world example is from [Real Python](realpython.com)'s article, [Python import: Advanced Techniques and Tips](https://realpython.com/python-import):
+Here's a real-world example from [Real Python](realpython.com)'s article, [Python import: Advanced Techniques and Tips](https://realpython.com/python-import):
 
 ```
 world/
