@@ -2,9 +2,9 @@
 
 ## Motivation
 
-The `tree` command is a widely-used and useful tool.  We see it often in code tutorials and reference documents.
+`tree` is a widely-used and useful command-line tool.  We see it often in code tutorials and reference documents.
 
-Here's a real-world example from [Real Python](realpython.com)'s article, [Python import: Advanced Techniques and Tips](https://realpython.com/python-import):
+Here's a real-world example of `tree` output from [Real Python](realpython.com)'s article, [Python import: Advanced Techniques and Tips](https://realpython.com/python-import):
 
 ```
 world/
@@ -21,7 +21,6 @@ world/
 │
 └── __init__.py
 ```
-
 
 Wouldn't it be nice to copy this into a file and generate a local directory tree? 
 
