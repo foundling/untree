@@ -1,4 +1,4 @@
-# untree: the inverse of tree
+# ![untree logo](untree-logo.png) untree: the inverse of tree 
 
 ## Motivation
 The `tree` command is a widely used and useful tool.  We see it often in code tutorials and reference documents.
