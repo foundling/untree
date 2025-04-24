@@ -1,4 +1,4 @@
-# `untree`: turn tree output back into directories
+# `untree`: create a file tree from `tree` output
 
 ![untree logo](untree-logo.png) 
 ![untree logo](untree-logo.png) 
