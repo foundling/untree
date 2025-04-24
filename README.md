@@ -7,12 +7,15 @@
 
 ## Usage
 
-```
-
+```bash
 untree [options] -s schema_file -o output_dir
-tree -F --noreport . | untree.py [options]
 ```
 
-`untree` is meant to work with `tree` output, so it uses a slightly specific invocation of `tree` as its specification:
+## Input Specification
+
+`untree` is designed to accept `tree` output as its input, so it requires a `schema` file formatted in the following way using the `tree` command:
 
 `tree -F --noreport <directory name>'
+
+The `-F` flag adds a trailing slash after directory names to distinguish them from regular files. The `--noreport` flag suppresses the `tree` summary.
+
