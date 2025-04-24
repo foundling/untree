@@ -1,12 +1,29 @@
-# ![untree logo](untree-logo.png) untree: the inverse of tree 
+# ![untree logo](untree-logo.png) untree: turn `tree` output back into directories
 
 ## Motivation
 
 The `tree` command is a widely used and useful tool.  We see it often in code tutorials and reference documents.
 
-Wouldn't it be nice to simply take the `tree` output from a tutorial or reference on the web and generate a local directory tree?
+Here is a real-world example is from [Real Python](realpython.com)'s article, [Python import: Advanced Techniques and Tips](https://realpython.com/python-import):
 
-I don't know about you but I get tired of typing `mkdir -p` over and over again in scenarios like this. That's where `untree` comes in.
+```
+world/
+│
+├── africa/
+│   ├── __init__.py
+│   └── zimbabwe.py
+│
+├── europe/
+│   ├── __init__.py
+│   ├── greece.py
+│   ├── norway.py
+│   └── spain.py
+│
+└── __init__.py
+```
+
+
+Wouldn't it be nice to copy this into a file and generate a local directory tree? 
 
 ## Installation
 `untree` is a command-line utility.  To install it globally, run:
@@ -52,7 +69,7 @@ new_dir
 ### Using stdin
 
 ```bash
-
+# pipe the output of tree directly into untree
 $ tree -F --noreport /path/to/src/dir | untree -o /path/to/output/dir
 
 ```
