@@ -106,9 +106,8 @@ $ untree -o /path/to/output/dir -s schema.txt
 
 ## Input Specification
 
-`untree` is designed specifically to accept `tree` output as its input. The standard invocation `tree <dir>`, however, produces output that is ambiguous (files and directories appear the same) and extranous (there is a summary at the end).
-
-For these reasons, the `untree` spec requires a slightly specific invocation of `tree`: 
+`untree` is designed specifically to accept `tree` output as its input. However, the most basic invocation of `tree` produces output that, for our purposes, is ambiguous and extraneous.
+Therefore, the `untree` spec requires a slightly more specific invocation of `tree`: 
 
 ```bash
 tree -F --noreport <directory name>'
