@@ -1,10 +1,12 @@
 
 
-
 from dataclasses import dataclass
 from typing import List
 
 from enum import Enum
+
+class ParseError(Exception):
+    pass
 
 class Filetype(Enum):
     file = 0
@@ -25,10 +27,39 @@ class Parser():
         self.max_lines:int | None = None
         self.indent_width: int = 0
 
-    def init(self, content:str):
+    def load(self, content:str):
         self.lines = [line for line in content.split('\n') if line.strip()]
         self.line_index = 0
         self.max_lines = len(self.lines)
+
+    def parse(self):
+            
+        prev_entry = None
+        while not self.end_of_lines():
+            entry = self.get_next_line()
+
+            if prev_entry:
+
+                # if we've done at least one node so far and the global depth of this
+                # entry is 0, we have an error. can't have two root nodes.
+
+                if entry.depth == 0:
+                    raise ParseError('Parse Error: two root directories detected.')
+                
+                indent = entry.depth - prev_entry.depth
+
+                if indent > 1:
+                    # can't have more than 1 indent
+                    raise ParseError('Parse Error: expected a single indent.')
+                    
+                yield entry, indent
+
+            else:
+                yield entry, 0
+
+
+            prev_entry = entry
+    
 
     def parse_indent_width(self, line:str) -> int:
         prefix, _ = line.split(' ')
