@@ -47,12 +47,10 @@ def main():
     if (is_from_filepath):
         with open(cli_args[0], 'r') as f:
             tree_text = f.read()
-    elif is_from_pipe:
+    else:
         tree_text = read_from_pipe()
 
-    else:
-        help()
-
+    
     if tree_text is None:
         return
 

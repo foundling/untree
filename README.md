@@ -1,4 +1,4 @@
-# ![untree logo](untree-logo.png) untree: turn `tree` output back into directories
+# ![untree logo](untree-logo.png) `untree`: turn tree output back into directories![untree logo](untree-logo.png)
 
 ## Motivation
 
@@ -22,7 +22,9 @@ world/
 └── __init__.py
 ```
 
-Wouldn't it be nice to copy this into a file and generate a local directory tree? 
+Wouldn't it be nice if we could copy this output and use it to generate the same file tree on our local machine? 
+
+That's the point of `untree`.
 
 ## Installation
 `untree` is a command-line utility.  To install it globally, run:
@@ -34,53 +36,64 @@ pip install untree
 ## Usage
 
 ```bash
-untree [options] -s schema_file -o output_dir
+untree [-s schema_file] -o output_dir
 ```
 
 ## Examples
 
-### Using a schema file
+### Paste text right into `untree`
+
+Copy the tree output from a website, document or terminal and paste it right into `untree`.
 
 ```bash
-# run 'tree' on a directory and save as a schema file.
-$ tree -F --noreport path/to/src/dir > schema.txt
+# we don't pass a schema file flag here, so it waits for us to enter the schema directly.
+# press CTRL-D to signal the end of the text.
 
-# this is what it looks like
-$ cat schema.txt
-testdir
-├── testdir/a
-│   └── testdir/a/a.txt
-└── testdir/b
-    └── testdir/b/b.txt
-
-# run 'untree' on the schema file
-$ untree -o /path/to/output/dir -s schema.txt
-
-# run 'tree' on your newly generated file tree
-$ tree -F --noreport /path/to/new_dir
-new_dir
-├── testdir/a
-│   └── testdir/a/a.txt
-└── testdir/b
-    └── testdir/b/b.txt
+$ untree -o /path/to/output/dir
+world/
+│
+├── africa/
+│   ├── __init__.py
+│   └── zimbabwe.py
+│
+├── europe/
+│   ├── __init__.py
+│   ├── greece.py
+│   ├── norway.py
+│   └── spain.py
+│
+└── __init__.py
 ```
 
-### Using stdin
+### Read schema file into `untree` stdin
+
+```bash
+# pipe the output of tree directly into untree
+$ untree -o /path/to/output/dir < schema.txt
+```
+
+### Pipe data into `untree` via stdin
 
 ```bash
 # pipe the output of tree directly into untree
 $ tree -F --noreport /path/to/src/dir | untree -o /path/to/output/dir
-
 ```
 
+### Using a schema file
 
-
+```bash
+$ untree -o /path/to/output/dir -s schema.txt
+```
 
 ## Input Specification
 
-`untree` is designed to accept `tree` output as its input, so it requires a `schema` file formatted in the following way using the `tree` command:
+`untree` is designed specifically to accept `tree` output as its input. The standard invocation `tree <dir>`, however, produces output that is ambiguous (files and directories appear the same) and extranous (there is a summary at the end).
 
-`tree -F --noreport <directory name>'
+For these reasons, the `untree` spec requires a slightly specific invocation of `tree`: 
 
-The `-F` flag adds a trailing slash after directory names to distinguish them from regular files. The `--noreport` flag suppresses the `tree` summary.
+```bash
+tree -F --noreport <directory name>'
+```
 
+- The `-F` flag adds a trailing slash after directory names to distinguish them from regular files.
+- The `--noreport` flag suppresses the `tree` command's concluding summary.
