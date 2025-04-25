@@ -1,18 +1,19 @@
-import pytest
-
 from untree.parser import Parser
 
+def test_parse_depth_ascii():
 
-@pytest.fixture
-def parser() -> Parser:
 
-    with open('./test/test_data/schema_ascii.txt', 'r') as f:
-        p = Parser()
-        p.load(f.read())
-    
-        return p
+    parser = Parser()
 
-def test_parse_depth(parser:Parser):
+    assert parser.parse_depth('|-- a/', indent_width=4) == 1
+    assert parser.parse_depth('|   `-- a.txt', indent_width=4) == 2
+    assert parser.parse_depth('|       `-- subdir_a.txt', indent_width=4) == 3
 
-    assert False is True
 
+def test_parse_depth_utf8():
+
+    parser = Parser()
+
+    assert parser.parse_depth('├── a/', indent_width=4) == 1
+    assert parser.parse_depth('│   └── a.txt', indent_width=4) == 2
+    assert parser.parse_depth('│       └── subdir_a.txt', indent_width=4) == 3

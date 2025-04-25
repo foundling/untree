@@ -1,0 +1,7 @@
+testdir/
+├── a/
+│   ├── a.txt
+│   └── subdir_a/
+│       └── subdir_a.txt
+└── b/
+    └── b.txt

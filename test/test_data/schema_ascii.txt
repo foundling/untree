@@ -1,5 +1,7 @@
 testdir/
 |-- a/
-|   `-- a.txt
+|   |-- a.txt
+|   `-- subdir_a/
+|       `-- subdir_a.txt
 `-- b/
     `-- b.txt
