@@ -9,11 +9,10 @@ class Node():
     # Forward References: https://peps.python.org/pep-0484/#forward-references\
     # Forward references bug with union syntax: https://bugs.python.org/issue45857
 
-    def __init__(self, filetype:Parser.Filetype, filename:str, parent: 'None | Node' = None):
+    def __init__(self, data: Parser.Data, parent: 'None | Node' = None):
         self.children:List[Node] = []
-        self.filetype = filetype
-        self.filename = filename
         self.parent = parent
+        self.data = data
 
     def add_node(self, node:'Node') -> None:
         self.children.append(node)
@@ -25,8 +24,7 @@ class Tree():
 
     def __init__(self):
         self.root: None | Node = None
-        self.current_node: None | Node = self.root
-
+        self.last_node_added: None | Node = None
 
     @staticmethod
     def print_node(node: Node | None) -> None:
@@ -34,18 +32,18 @@ class Tree():
 
     def find_ancestor(self, num_ancestors: int) -> 'Node | None':
 
-        if not self.current_node:
+        if not self.last_node_added:
             return None
         
-        node = self.current_node
+        node = self.last_node_added
 
         while num_ancestors > 0:
-            node = self.current_node.parent
+            node = self.last_node_added.parent
             num_ancestors -= 1
 
         return node
 
-    def walk(self, node: Node | None, callback: Callable[[Node | None], None] | None = None):
+    def walk(self, node: Node | None = None, callback: Callable[[Node], None] | None = None):
         
         if callback is None:
             callback = Tree.print_node
@@ -61,27 +59,34 @@ class Tree():
         if node.children and len(node.children) > 0:
             for child in node.children:
                 self.walk(child, callback)
+        
+    def add_node(self, data:Parser.Data, indent: int) -> None:
 
-    def add_node(self, entry:Parser.Entry, indent: int) -> None:
+        node = Node(data)
 
+        
         # empty tree
-        if not (self.root and self.current_node):
-            self.root = Node(entry.filetype, entry.filename)
-            self.current_node = self.root
+        if not (self.last_node_added):
+            self.root = node
+
 
         # tree with existing nodes
         else:
-            node = Node(entry.filetype, entry.filename)
 
+            # if it's an indent, we add current node as child of prev.
             if indent > 0:
-                self.current_node.children.append(node)
+                self.last_node_added.children.append(node)
 
+            # if no indent, we add current node to children of parent, bc it's a sibling.
             elif indent == 0:
-                if self.current_node.parent:
-                    self.current_node.parent.children.append(node)
+                if self.last_node_added.parent:
+                    self.last_node_added.parent.children.append(node)
 
             else:
                 parent = self.find_ancestor(abs(indent))
     
                 if parent:
                     parent.children.append(node)
+        
+
+        self.last_node_added = node

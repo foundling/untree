@@ -13,8 +13,7 @@ class Filetype(Enum):
     directory = 1
 
 @dataclass
-class Entry():
-    depth: int
+class Data():
     filename: str
     filetype: Filetype
 
@@ -34,31 +33,33 @@ class Parser():
 
     def parse(self):
             
-        prev_entry = None
-        while not self.end_of_lines():
-            entry = self.get_next_line()
+        prev_data = None
 
-            if prev_entry:
+        while not self.end_of_lines():
+
+            data, depth = self.get_next_line()
+
+            if prev_data:
 
                 # if we've done at least one node so far and the global depth of this
                 # entry is 0, we have an error. can't have two root nodes.
 
-                if entry.depth == 0:
+                if depth == 0:
                     raise ParseError('Parse Error: two root directories detected.')
                 
-                indent = entry.depth - prev_entry.depth
+                indent = depth - depth
 
                 if indent > 1:
                     # can't have more than 1 indent
                     raise ParseError('Parse Error: expected a single indent.')
                     
-                yield entry, indent
+                yield data, indent
 
             else:
-                yield entry, 0
+                yield data, 0
 
 
-            prev_entry = entry
+            prev_data = data
     
 
     def parse_indent_width(self, line:str) -> int:
@@ -100,4 +101,4 @@ class Parser():
         depth = self.parse_depth(line)
         filetype = self.parse_type(line)
 
-        return Entry(depth=depth, filename=filename, filetype=filetype)
+        return Data(filename=filename, filetype=filetype), depth

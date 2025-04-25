@@ -1,7 +1,13 @@
 #!/usr/bin/env python
 
 from untree.parser import Parser
-from untree.tree import Tree
+from untree.tree import Tree, Node
+
+
+
+def print_filename(node:Node) -> None:
+    print('filename: ', node.filename)
+
 
 '''
 
@@ -40,7 +46,6 @@ def main():
     cli_args = sys.argv[1:]  # oversimplified arg handling
     is_from_filepath = len(cli_args) > 0
     is_from_pipe = sys.__stdin__ and not sys.__stdin__.isatty()
-    
 
     tree_text : str | None = None
 
@@ -49,17 +54,17 @@ def main():
             tree_text = f.read()
     else:
         tree_text = read_from_pipe()
-
     
     if tree_text is None:
         return
-
 
     tree = Tree()
     parser = Parser()
     parser.load(tree_text)
 
-    for entry, indent in parser.parse():
-        print(entry, indent)
+    for data, indent in parser.parse():
+        # FIXME: bug in tree construction.
+        # currently setting up unit tests
+        tree.add_node(data, indent)
 
-    tree.walk(None)
+    tree.walk(node=None, callback=print_filename)
