@@ -6,7 +6,7 @@ from untree.tree import Tree, Node
 
 
 def print_filename(node:Node) -> None:
-    print('filename: ', node.filename)
+    print('filename: ', node.data.filename)
 
 
 '''
@@ -34,6 +34,7 @@ def read_from_pipe() -> str:
     return ''.join(line for line in fileinput.input())
 
 def read_from_filepath(filepath:str) -> str:
+    
     with open(filepath) as f:
         content = f.read()
     return content
