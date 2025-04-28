@@ -63,9 +63,9 @@ def main():
     parser = Parser()
     parser.load(tree_text)
 
+    # rename relative_indent
     for data, indent in parser.parse():
-        # FIXME: bug in tree construction.
-        # currently setting up unit tests
+
         tree.add_node(data, indent)
 
-    tree.walk(node=None, callback=print_filename)
+    tree.walk()

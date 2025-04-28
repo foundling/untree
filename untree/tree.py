@@ -14,11 +14,15 @@ class Node():
         self.parent = parent
         self.data = data
 
-    def add_node(self, node:'Node') -> None:
+    def add_node(self, node:'Node', parent: 'Node | None') -> None:
         self.children.append(node)
-    
+        self.parent = parent
+
     def __repr__(self):
         return str(self.__dict__)
+    
+    def print_node(self):
+        print(f'{self.data.filename} | {self.data.filetype.name}')
 
 class Tree():
 
@@ -27,8 +31,8 @@ class Tree():
         self.last_node_added: None | Node = None
 
     @staticmethod
-    def print_node(node: Node | None) -> None:
-        print(node.__dict__)
+    def print_node(node: Node) -> None:
+        node.print_node()
 
     def find_ancestor(self, num_ancestors: int) -> 'Node | None':
 
@@ -42,6 +46,40 @@ class Tree():
             num_ancestors -= 1
 
         return node
+
+
+    def add_node(self, data:Parser.Data, indent: int) -> None:
+
+        node = Node(data)
+
+        # empty tree
+        if not (self.last_node_added):
+            self.root = node
+
+
+        # tree with existing nodes
+        else:
+
+            # if it's an indent, we add current node as child of prev.
+            if indent > 0:
+                self.last_node_added.children.append(node)
+                node.parent = self.last_node_added
+
+            # if no indent, we add current node to children of parent, bc it's a sibling.
+            elif indent == 0:
+                if self.last_node_added.parent:
+                    self.last_node_added.parent.children.append(node)
+                    node.parent = self.last_node_added.parent
+
+            else:
+                parent = self.find_ancestor(abs(indent))
+    
+                if parent:
+                    parent.children.append(node)
+        
+
+        self.last_node_added = node
+
 
     def walk(self, node: Node | None = None, callback: Callable[[Node], None] | None = None):
         
@@ -60,33 +98,3 @@ class Tree():
             for child in node.children:
                 self.walk(child, callback)
         
-    def add_node(self, data:Parser.Data, indent: int) -> None:
-
-        node = Node(data)
-
-        
-        # empty tree
-        if not (self.last_node_added):
-            self.root = node
-
-
-        # tree with existing nodes
-        else:
-
-            # if it's an indent, we add current node as child of prev.
-            if indent > 0:
-                self.last_node_added.children.append(node)
-
-            # if no indent, we add current node to children of parent, bc it's a sibling.
-            elif indent == 0:
-                if self.last_node_added.parent:
-                    self.last_node_added.parent.children.append(node)
-
-            else:
-                parent = self.find_ancestor(abs(indent))
-    
-                if parent:
-                    parent.children.append(node)
-        
-
-        self.last_node_added = node

@@ -56,7 +56,6 @@ def test_parse_indent_width():
     assert parser.parse_indent_width(' dir_a/') == 1
     assert parser.parse_indent_width('               dir_a/') == 15
 
-
 def test_get_next_line():
 
     parser = Parser()

@@ -6,12 +6,15 @@ from typing import List
 
 from enum import Enum
 
+
 class ParseError(Exception):
     pass
+
 
 class Filetype(Enum):
     file = 0
     directory = 1
+
 
 @dataclass
 class Data():
@@ -31,37 +34,6 @@ class Parser():
         self.lines = [line for line in content.split('\n') if line.strip()]
         self.line_index = 0
         self.max_lines = len(self.lines)
-
-    def parse(self):
-            
-        prev_data = None
-
-        while not self.end_of_lines():
-
-            data, depth = self.get_next_line()
-
-            if prev_data:
-
-                # if we've done at least one node so far and the global depth of this
-                # entry is 0, we have an error. can't have two root nodes.
-
-                if depth == 0:
-                    raise ParseError('Parse Error: two root directories detected.')
-                
-                indent = depth - depth
-
-                if indent > 1:
-                    # can't have more than 1 indent
-                    raise ParseError('Parse Error: expected a single indent.')
-                    
-                yield data, indent
-
-            else:
-                yield data, 0
-
-
-            prev_data = data
-    
 
     # designed to be run on first indented line, aka line #1
     def parse_indent_width(self, line:str) -> int:
@@ -111,7 +83,39 @@ class Parser():
         depth = (0 if self.indent_width is None 
                    else self.parse_depth(line, indent_width = self.indent_width))
 
-
         self.line_index += 1
         
         return Data(filename=filename, filetype=filetype), depth
+
+    def parse(self):
+            
+        prev_data = None
+        prev_depth = None
+
+        while not self.end_of_lines():
+
+            data, depth = self.get_next_line()
+
+            if prev_data:
+
+                # if we've done at least one node so far and the global depth of this
+                # entry is 0, we have an error. can't have two root nodes.
+
+                if depth == 0:
+                    raise ParseError('Parse Error: two root directories detected.')
+                
+                indent = depth - prev_depth
+
+                if indent > 1:
+                    # can't have more than 1 indent
+                    raise ParseError('Parse Error: expected a single indent.')
+                    
+                yield data, indent
+
+            else:
+                yield data, 0
+
+
+            prev_data = data
+            prev_depth = depth
+    
