@@ -63,15 +63,15 @@ class Parser():
             prev_data = data
     
 
+    # designed to be run on first indented line, aka line #1
     def parse_indent_width(self, line:str) -> int:
         
-        match = re.match(r"^\s+", line)
+        parts = line.rsplit(' ', maxsplit=1)
 
-        if not match:
-            return 0
-        else:
-            return len(match.group())
-
+        return (0
+                if len(parts) < 2
+                else len(parts[0]) + 1
+        )
 
     def parse_depth(self, line:str, indent_width:int=4) -> int:
         
@@ -100,11 +100,9 @@ class Parser():
         if not self.lines:
             raise ValueError('no lines!')
         
-        # from line, parse: depth, type, and name from line
         line:str = self.lines[self.line_index]
 
-
-        # since we require a root, line #2 should tell us the indent
+        # since we require a root, line #2 should tell us the indent width
         if self.line_index == 1:
             self.indent_width = self.parse_indent_width(line)
 
