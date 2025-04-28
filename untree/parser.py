@@ -2,7 +2,7 @@
 
 from dataclasses import dataclass
 import re
-from typing import List
+from typing import Generator, List
 
 from enum import Enum
 
@@ -20,6 +20,8 @@ class Filetype(Enum):
 class Data():
     filename: str
     filetype: Filetype
+    absolute_depth: int
+    relative_depth: int
 
 
 class Parser():
@@ -31,9 +33,13 @@ class Parser():
         self.indent_width: int | None = None
 
     def load(self, content:str):
+ 
         self.lines = [line for line in content.split('\n') if line.strip()]
         self.line_index = 0
         self.max_lines = len(self.lines)
+        self.indent_width = (None if len(self.lines) == 1
+                                  else self.parse_indent_width(self.lines[1])
+        )
 
     # designed to be run on first indented line, aka line #1
     def parse_indent_width(self, line:str) -> int:
@@ -45,7 +51,14 @@ class Parser():
                 else len(parts[0]) + 1
         )
 
-    def parse_depth(self, line:str, indent_width:int=4) -> int:
+    def parse_depth(self, line:str, indent_width: int | None) -> int:
+        ''' 
+            calculate the depth as a multiple of the previously calculated indent width,
+            returning 0 if indent width width is None.
+        '''
+        
+        if indent_width is None:
+            return 0
         
         # distance from start to filename / indent_width
         
@@ -67,55 +80,51 @@ class Parser():
         
         return self.line_index >= self.max_lines
     
-    def get_next_line(self):
+    def get_next_line(self, previous_absolute_depth: int) -> Data:
 
         if not self.lines:
             raise ValueError('no lines!')
         
         line:str = self.lines[self.line_index]
 
-        # since we require a root, line #2 should tell us the indent width
-        if self.line_index == 1:
-            self.indent_width = self.parse_indent_width(line)
+        absolute_depth = self.parse_depth(line, self.indent_width)
+        relative_depth = absolute_depth - previous_absolute_depth
 
         filename = self.parse_filename(line)
-        filetype = self.parse_type(line)   
-        depth = (0 if self.indent_width is None 
-                   else self.parse_depth(line, indent_width = self.indent_width))
+        filetype = self.parse_type(line)
 
         self.line_index += 1
         
-        return Data(filename=filename, filetype=filetype), depth
+        return Data(
+            filename=filename,
+            filetype=filetype,
+            absolute_depth=absolute_depth,
+            relative_depth=relative_depth
+        )
 
-    def parse(self):
+    def parse(self) -> Generator[Data, None, None]:
             
         prev_data = None
-        prev_depth = None
 
         while not self.end_of_lines():
 
-            data, depth = self.get_next_line()
+            previous_absolute_depth = 0 if not prev_data else prev_data.absolute_depth
+            data = self.get_next_line(previous_absolute_depth=previous_absolute_depth)
 
-            if prev_data:
+            # first line, assuming depth 0
+            if  (prev_data):
 
                 # if we've done at least one node so far and the global depth of this
                 # entry is 0, we have an error. can't have two root nodes.
 
-                if depth == 0:
+                if data.absolute_depth == 0:
                     raise ParseError('Parse Error: two root directories detected.')
                 
-                indent = depth - prev_depth
-
-                if indent > 1:
+                if data.relative_depth > 1:
                     # can't have more than 1 indent
                     raise ParseError('Parse Error: expected a single indent.')
                     
-                yield data, indent
 
-            else:
-                yield data, 0
-
-
+            yield data
             prev_data = data
-            prev_depth = depth
     

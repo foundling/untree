@@ -1,13 +1,12 @@
 #!/usr/bin/env python
 
 from untree.parser import Parser
-from untree.tree import Tree, Node
+from untree.tree import Tree, Node, print_node
 
 
 
 def print_filename(node:Node) -> None:
-    print('filename: ', node.data.filename)
-
+    print(f'filename: {node.data.filename}\nfiletype: {node.data.filetype}\nabsolute depth: {node.data.absolute_depth}\nrelative depth: {node.data.relative_depth}')
 
 '''
 
@@ -64,8 +63,9 @@ def main():
     parser.load(tree_text)
 
     # rename relative_indent
-    for data, indent in parser.parse():
+    for data in parser.parse():
 
-        tree.add_node(data, indent)
+        tree.add_node(data)
 
-    tree.walk()
+
+    tree.walk(None, print_node)

@@ -1,10 +1,11 @@
 from untree.parser import Parser, Filetype
 
+
 TEST_INPUT = '''
 dir_a/
-  file_a.txt
-  subdir_a/
-    subdir_file_a.txt
+    file_a.txt
+    subdir_a/
+        subdir_file_a.txt
 '''.strip()
 
 def test_parse_depth_ascii():
@@ -60,29 +61,34 @@ def test_get_next_line():
 
     parser = Parser()
 
+
     parser.load(TEST_INPUT)
 
-    data, depth = parser.get_next_line()
+    line1 = parser.get_next_line(previous_absolute_depth=0)
 
-    assert data.filename == 'dir_a'
-    assert data.filetype == Filetype.directory
-    assert depth == 0
+    assert line1.filename == 'dir_a'
+    assert line1.filetype == Filetype.directory
+    assert line1.absolute_depth == 0
+    assert line1.relative_depth == 0
 
-    data, depth = parser.get_next_line()
-    
-    assert data.filename == 'file_a.txt'
-    assert data.filetype == Filetype.file
-    assert depth == 1
+    line2 = parser.get_next_line(previous_absolute_depth=line1.absolute_depth)
 
-    data, depth = parser.get_next_line()
-    
-    assert data.filename == 'subdir_a'
-    assert data.filetype == Filetype.directory
-    assert depth == 1
+    assert line2.filename == 'file_a.txt'
+    assert line2.filetype == Filetype.file
+    assert line2.absolute_depth == 1
+    assert line2.relative_depth == 1
 
-    data, depth = parser.get_next_line()
-    
-    assert data.filename == 'subdir_file_a.txt'
-    assert data.filetype == Filetype.file
-    assert depth == 2
 
+    line3 = parser.get_next_line(previous_absolute_depth=line2.absolute_depth)
+
+    assert line3.filename == 'subdir_a'
+    assert line3.filetype == Filetype.directory
+    assert line3.absolute_depth == 1
+    assert line3.relative_depth == 0
+
+    line4 = parser.get_next_line(previous_absolute_depth=line3.absolute_depth)
+
+    assert line4.filename == 'subdir_file_a.txt'
+    assert line4.filetype == Filetype.file
+    assert line4.absolute_depth == 2
+    assert line4.relative_depth == 1
