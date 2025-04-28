@@ -29,11 +29,10 @@ class Tree():
 
         if not self.last_node_added:
             return None
-        
+
         node = self.last_node_added
 
         while num_ancestors >= 0:
-            p = node.parent.data.filename
             node = node.parent
             num_ancestors -= 1
 
