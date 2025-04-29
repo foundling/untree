@@ -6,6 +6,7 @@ dir_a/
     file_a.txt
     subdir_a/
         subdir_file_a.txt
+    subdir_b/
 '''.strip()
 
 def test_parse_depth_ascii():
@@ -13,34 +14,34 @@ def test_parse_depth_ascii():
 
     parser = Parser()
 
-    assert parser.parse_depth('|-- a/', indent_width=4) == 1
-    assert parser.parse_depth('|   `-- a.txt', indent_width=4) == 2
-    assert parser.parse_depth('|       `-- subdir_a.txt', indent_width=4) == 3
-    assert parser.parse_depth('|-- a/', indent_width=2) == 2
-    assert parser.parse_depth('|   `-- a.txt', indent_width=2) == 4
-    assert parser.parse_depth('|       `-- subdir_a.txt', indent_width=2) == 6
+    assert parser.parse_depth('|-- a/', 4) == 1
+    assert parser.parse_depth('|   `-- a.txt', 4) == 2
+    assert parser.parse_depth('|       `-- subdir_a.txt', 4) == 3
+    assert parser.parse_depth('|-- a/', 2) == 2
+    assert parser.parse_depth('|   `-- a.txt', 2) == 4
+    assert parser.parse_depth('|       `-- subdir_a.txt', 2) == 6
 
 def test_parse_depth_utf8():
 
     parser = Parser()
 
-    assert parser.parse_depth('├── a/', indent_width=4) == 1
-    assert parser.parse_depth('│   └── a.txt', indent_width=4) == 2
-    assert parser.parse_depth('│       └── subdir_a.txt', indent_width=4) == 3
+    assert parser.parse_depth('├── a/', 4) == 1
+    assert parser.parse_depth('│   └── a.txt', 4) == 2
+    assert parser.parse_depth('│       └── subdir_a.txt', 4) == 3
 
 
-    assert parser.parse_depth('├── a/', indent_width=2) == 2
-    assert parser.parse_depth('│   └── a.txt', indent_width=2) == 4
-    assert parser.parse_depth('│       └── subdir_a.txt', indent_width=2) == 6
+    assert parser.parse_depth('├── a/', 2) == 2
+    assert parser.parse_depth('│   └── a.txt', 2) == 4
+    assert parser.parse_depth('│       └── subdir_a.txt', 2) == 6
 
-def test_parse_type():
+def test_parse_filetype():
 
     parser = Parser()
 
-    assert parser.parse_type('├── a/') == Filetype.directory
-    assert parser.parse_type('│   └── a.txt') == Filetype.file
-    assert parser.parse_type('│       └── subdir_a.txt') == Filetype.file
-    assert parser.parse_type('             subdir_a/') == Filetype.directory
+    assert parser.parse_filetype('├── a/') == Filetype.directory
+    assert parser.parse_filetype('│   └── a.txt') == Filetype.file
+    assert parser.parse_filetype('│       └── subdir_a.txt') == Filetype.file
+    assert parser.parse_filetype('             subdir_a/') == Filetype.directory
 
 def test_parse_filename():
 
@@ -57,38 +58,33 @@ def test_parse_indent_width():
     assert parser.parse_indent_width(' dir_a/') == 1
     assert parser.parse_indent_width('               dir_a/') == 15
 
-def test_get_next_line():
+def test_parse_next_line():
 
     parser = Parser()
-
-
     parser.load(TEST_INPUT)
+    lines = parser.parse()
 
-    line1 = parser.get_next_line(previous_absolute_depth=0)
-
-    assert line1.filename == 'dir_a'
-    assert line1.filetype == Filetype.directory
-    assert line1.absolute_depth == 0
-    assert line1.relative_depth == 0
-
-    line2 = parser.get_next_line(previous_absolute_depth=line1.absolute_depth)
-
-    assert line2.filename == 'file_a.txt'
-    assert line2.filetype == Filetype.file
-    assert line2.absolute_depth == 1
-    assert line2.relative_depth == 1
+    assert lines[0].absolute_depth == 0
+    assert lines[1].absolute_depth == 1
+    assert lines[2].absolute_depth == 1
+    assert lines[3].absolute_depth == 2
+    assert lines[4].absolute_depth == 1
 
 
-    line3 = parser.get_next_line(previous_absolute_depth=line2.absolute_depth)
+    assert lines[0].relative_depth == None
+    assert lines[1].relative_depth == 1
+    assert lines[2].relative_depth == 0
+    assert lines[3].relative_depth == 1
+    assert lines[4].relative_depth == -1
 
-    assert line3.filename == 'subdir_a'
-    assert line3.filetype == Filetype.directory
-    assert line3.absolute_depth == 1
-    assert line3.relative_depth == 0
+    assert lines[0].filename == 'dir_a'
+    assert lines[1].filename == 'file_a.txt'
+    assert lines[2].filename == 'subdir_a'
+    assert lines[3].filename == 'subdir_file_a.txt'
+    assert lines[4].filename == 'subdir_b'  
 
-    line4 = parser.get_next_line(previous_absolute_depth=line3.absolute_depth)
-
-    assert line4.filename == 'subdir_file_a.txt'
-    assert line4.filetype == Filetype.file
-    assert line4.absolute_depth == 2
-    assert line4.relative_depth == 1
+    assert lines[0].filetype == Filetype.directory
+    assert lines[1].filetype == Filetype.file
+    assert lines[2].filetype == Filetype.directory
+    assert lines[3].filetype == Filetype.file
+    assert lines[4].filetype == Filetype.directory

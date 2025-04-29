@@ -4,7 +4,6 @@ from untree.parser import Parser
 from untree.tree import Tree, Node, print_node
 
 
-
 def print_filename(node:Node) -> None:
     print(f'filename: {node.data.filename}\nfiletype: {node.data.filetype}\nabsolute depth: {node.data.absolute_depth}\nrelative depth: {node.data.relative_depth}')
 
@@ -45,7 +44,7 @@ def main():
 
     cli_args = sys.argv[1:]  # oversimplified arg handling
     is_from_filepath = len(cli_args) > 0
-    is_from_pipe = sys.__stdin__ and not sys.__stdin__.isatty()
+    # is_from_pipe = sys.__stdin__ and not sys.__stdin__.isatty()
 
     tree_text : str | None = None
 
@@ -54,18 +53,12 @@ def main():
             tree_text = f.read()
     else:
         tree_text = read_from_pipe()
-    
-    if tree_text is None:
-        return
 
     tree = Tree()
     parser = Parser()
     parser.load(tree_text)
 
-    # rename relative_indent
-    for data in parser.parse():
-
-        tree.add_node(data)
-
+    for line_data in parser.parse():
+        tree.add_node(line_data)
 
     tree.walk(None, print_node)
