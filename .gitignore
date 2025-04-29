@@ -2,5 +2,4 @@ __pycache__
 env/
 .vscode
 
-schema.txt
-schema2.txt
+schema*
