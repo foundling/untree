@@ -124,7 +124,7 @@ class Parser():
 
             # first line
             if line_index == 0:
-                data = self.parse_first_line(line, line_index)
+                data = self.parse_first_line(line)
 
             # second line or later
             else:
