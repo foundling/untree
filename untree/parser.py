@@ -26,10 +26,10 @@ class Data():
 class Parser():
 
     def __init__(self):
-        self.lines:List[str] = []
+        self.lines: List[str] = []
         self.line_index: int = 0
-        self.max_lines:int | None = None
-        self.indent_width: int | None = None
+        self.max_lines:int = 0
+        self.indent_width: int = 0
 
     @property
     def line_number(self):
@@ -44,11 +44,8 @@ class Parser():
         self.max_lines = len(self.lines)
         self.indent_width = self.init_indent_width()
         
-    def init_indent_width(self) -> int | None:
+    def init_indent_width(self) -> int:
 
-        if len(self.lines) < 2:
-            return None
-        
         indent_width = self.parse_indent_width(self.lines[1])
         
         if indent_width < 1:
@@ -65,9 +62,6 @@ class Parser():
         return bool(line.strip())
 
     def end_of_lines(self) -> bool:
-
-        if self.max_lines is None:
-            return True
 
         return self.line_index >= self.max_lines
 
@@ -100,11 +94,8 @@ class Parser():
 
     def parse_next_line(self, line: str, previous_absolute_depth: int | None) -> Data:
 
-        # this is first line, so we check indent width but do not parse depth
-        # because it's relative to previous line.
-
         if previous_absolute_depth is None:
-
+            # None when parsing the first line
             if self.parse_indent_width(line) > 0:
                 raise ParseError(f'Invalid indent on line: {self.line_number}')
 
@@ -115,8 +106,8 @@ class Parser():
                 filetype = self.parse_filetype(line)
             )
 
-        elif self.indent_width is not None and self.line_index > 0:
-            
+        elif self.line_index > 0:
+            # lines 2 - end.
             absolute_depth = self.parse_depth(line, self.indent_width)
             relative_depth = absolute_depth - previous_absolute_depth
 
@@ -133,10 +124,11 @@ class Parser():
     def parse(self) -> List[Data]:
 
         prev_data: Data | None = None
-        lines: List[Data] = []
+        parsed_lines: List[Data] = []
 
         while not self.end_of_lines():
             line = self.lines[self.line_index]
+
             # first line
             if self.line_index == 0:
 
@@ -165,9 +157,9 @@ class Parser():
                     # can't have more than 1 indent
                     raise ParseError('Parse Error: expected a single indent.')
 
-            lines.append(data)
+            parsed_lines.append(data)
             prev_data = data
             self.line_index += 1
 
-        return lines
+        return parsed_lines
 
