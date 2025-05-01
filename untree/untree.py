@@ -1,11 +1,8 @@
 #!/usr/bin/env python
 
 from untree.parser import Parser
-from untree.tree import Tree, Node, print_node
+from untree.tree import Node, walk_tree, print_node
 
-
-def print_filename(node:Node) -> None:
-    print(f'filename: {node.data.filename}\nfiletype: {node.data.filetype}\nabsolute depth: {node.data.absolute_depth}\nrelative depth: {node.data.relative_depth}')
 
 '''
 
@@ -54,11 +51,17 @@ def main():
     else:
         tree_text = read_from_pipe()
 
-    tree = Tree()
+    tree = Node()
     parser = Parser()
     parser.load(tree_text)
 
+    current_node = tree
     for line_data in parser.parse():
-        tree.add_node(line_data)
+    
+        node = Node(line_data)
+        current_node.add_node(node)
+        current_node = node
 
-    tree.walk(None, print_node)
+    
+
+    walk_tree(tree, print_node) 
