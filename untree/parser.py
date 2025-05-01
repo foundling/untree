@@ -1,5 +1,5 @@
 from dataclasses import dataclass
-from typing import List, Iterator
+from typing import List
 
 from enum import Enum
 
@@ -27,26 +27,22 @@ class Parser():
 
     def __init__(self):
         self.lines: List[str] = []
-        self.max_lines:int = 0
         self.indent_width: int = 0
 
     def load(self, content:str):
-
         self.lines = [ line for index, line 
                             in enumerate(content.split('\n')) 
                             if self.is_valid_line(line, index) ]
+        
+        if len(self.lines) > 1:
 
-        self.max_lines = len(self.lines)
-        self.indent_width = self.init_indent_width()
-        
-    def init_indent_width(self) -> int:
+            indent_width = self.parse_indent_width(self.lines[1])
+            
+            if indent_width < 1:
+                raise ParseError('Invalid indent width on line 1.')
+            
+            self.indent_width = indent_width        
 
-        indent_width = self.parse_indent_width(self.lines[1])
-        
-        if indent_width < 1:
-            raise ParseError('Invalid indent width on line 1.')
-        
-        return indent_width
 
     @staticmethod
     def is_valid_line(line: str, index: int) -> bool:
@@ -56,13 +52,16 @@ class Parser():
 
         return bool(line.strip())
 
-    def parse_filetype(self, line:str) -> Filetype:
+    @staticmethod
+    def parse_filetype(line:str) -> Filetype:
         return Filetype.directory if line.endswith('/') else Filetype.file
 
-    def parse_filename(self, line:str) -> str:
+    @staticmethod
+    def parse_filename(line:str) -> str:
         return line.rsplit(sep=' ', maxsplit=1)[-1].rstrip('/')
 
-    def parse_indent_width(self, line:str) -> int:
+    @staticmethod
+    def parse_indent_width(line:str) -> int:
 
         parts = line.rsplit(' ', maxsplit=1)
 
@@ -102,11 +101,11 @@ class Parser():
 
         if absolute_depth == 0:
             # two dirs with no indents means two parents, invalid.
-            raise ParseError(f'Parse Error: two root directories detected at line {line_index + 1}')
+            raise ParseError(f'Two root directories detected at line {line_index + 1}')
 
         if relative_depth > 1:
             # more than one indent would mean grandchild without direct parent, invalid.
-            raise ParseError('Parse Error: expected a single indent.')
+            raise ParseError('Expected a single indent.')
 
         return Data(
             absolute_depth = absolute_depth,
@@ -123,7 +122,7 @@ class Parser():
         for line_index, line in enumerate(self.lines):
 
             # first line
-            if line_index == 0:
+            if line_index < 1:
                 data = self.parse_first_line(line)
 
             # second line or later
